@@ -12,7 +12,7 @@
 
     <!-- Add any additional styles or CSS imports here if needed -->
     <!-- For example, if you have a local CSS file, you can include it like this -->
-    <!-- <link rel="stylesheet" href="{% static 'yourappname/css/yourstyles.css' %}"> -->
+{#    <!-- <link rel="stylesheet" href="{% static 'yourappname/css/yourstyles.css' %}"> -->#}
 </head>
 
 <body>
@@ -36,7 +36,7 @@
 {#                </div>#}
 
                 <div class="hidden lg:absolute lg:inset-y-0 lg:flex lg:items-right lg:justify-end lg:space-x-12 lg:-translate-x-full lg:left-1/2 lg:right-0">
-                    <a href="#" title="" class="text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"> Pricing </a>
+                    <a href="{% url 'pricing' %}" title="" class="text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"> Pricing </a>
 {##}
 {#                    <a href="#" title="" class="text-base font-medium text-gray-900 transition-all duration-200 rounded focus:outline-none font-pj hover:text-opacity-50 focus:ring-1 focus:ring-gray-900 focus:ring-offset-2"> Community Groups </a>#}
 
@@ -61,14 +61,14 @@
         <section class="relative py-12 sm:py-16 lg:pt-20 xl:pb-0">
             <div class="relative px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
                 <div class="max-w-3xl mx-auto text-center">
-                    <p class="inline-flex px-4 py-2 text-base text-gray-900 border border-gray-200 rounded-full font-pj">Made by Muhammadqodir, with Love and No sleep</p>
+                    <p class="inline-flex px-4 py-2 text-base text-gray-900 border border-gray-200 rounded-full font-pj">Kindly, don't prank each other :)</p>
                     <h1 class="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">College Decision Simulator</h1>
                     <p class="max-w-md mx-auto mt-6 text-base leading-7 text-gray-600 font-inter">College Decision Simulator generates rejection & acceptance letters from top US universities and sends them via email.</p>
 
                     <div class="relative inline-flex mt-10 group">
                     <div class="absolute transitiona-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
 
-                    <a href="#" title="" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" role="button">
+                    <a href="{% url 'send_letter' %}" title="" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" role="button">
                         Start generating letters
                     </a>
                 </div>
@@ -307,7 +307,7 @@
 
         <div class="grid grid-cols-2 gap-6 mt-10 lg:mt-16 lg:gap-4 lg:grid-cols-2">
             <!-- First Image -->
-            <div class="relative group bg-white col-span-2 lg:col-span-1">
+            <div class="relative group bg-white col-span-2 lg:col-span-1 rounded-lg">
                 <img
                     src="{% static 'harvard.png' %}"
                     alt="Your Alt Text 2"
@@ -318,7 +318,7 @@
                 </div>
             </div>
 
-            <div class="relative group bg-white col-span-2 lg:col-span-1">
+            <div class="relative group bg-white col-span-2 lg:col-span-1 rounded-lg">
                 <img
                     src="{% static 'stanford.png' %}"
                     alt="Your Alt Text 2"
@@ -330,7 +330,7 @@
             </div>
 
             <!-- Second Image -->
-            <div class="relative group bg-white col-span-2 lg:col-span-1">
+            <div class="relative group bg-white col-span-2 lg:col-span-1 rounded-lg">
                 <img
                     src="{% static 'yale.png' %}"
                     alt="Your Alt Text 2"
@@ -341,7 +341,7 @@
                 </div>
             </div>
 
-            <div class="relative group bg-white col-span-2 lg:col-span-1">
+            <div class="relative group bg-white col-span-2 lg:col-span-1 rounded-lg">
                 <img
                     src="{% static 'chicago.png' %}"
                     alt="Your Alt Text 2"
@@ -365,7 +365,7 @@
             <div class="grid grid-cols-2 md:col-span-3 lg:grid-cols-6 gap-y-16 gap-x-12">
                 <div class="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
 
-                    <p class="text-base leading-relaxed text-gray-600 mt-7">If you were dumb enough to believe our emails, you deserved it! We hope to promote fact-checking and a bit of critical thinking :)</p>
+                    <p class="text-base leading-relaxed text-gray-600 mt-7">If you were dumb enough to believe our emails, you deserved it! We hope to promote fact-checking and a bit of critical thinking although with a little disaster :)</p>
 
                     <ul class="flex items-center space-x-3 mt-9">
                         <li>

@@ -5,20 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8014e219-4b32-45d6-8346-eb24636a1b83" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/collegedecisionweb.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/college_decision/migrations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/collegedecisionweb/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/collegedecisionweb/asgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/collegedecisionweb/settings.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/collegedecisionweb/urls.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/collegedecisionweb/wsgi.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/manage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,8 +22,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -107,7 +98,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1705711253073</updated>
-      <workItem from="1705711255846" duration="17385000" />
+      <workItem from="1705711255846" duration="29960000" />
     </task>
     <servers />
   </component>
