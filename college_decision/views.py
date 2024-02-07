@@ -49,38 +49,3 @@ def peasant(request):
     return render(request, 'payments.html')
 
 
-def handle_checkout_session(session):
-    # Example function to handle checkout session completion
-    # Get customer id from session and update the user's subscription status
-    customer_id = session.get('customer')
-    user = User.objects.get(stripe_customer_id=customer_id)
-
-
-@require_POST
-@csrf_exempt
-def stripe_webhook(request):
-    payload = request.body
-    sig_header = request.headers.get('HTTP_STRIPE_SIGNATURE')
-
-    event = None
-
-    try:
-        event = stripe.Webhook.construct_event(
-            payload, sig_header, endpoint_secret
-        )
-    except ValueError as e:
-        # Invalid payload
-        return JsonResponse({'error': 'Invalid payload'}, status=400)
-    except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        return JsonResponse({'error': 'Invalid signature'}, status=400)
-
-    # Handle the event
-    if event['type'] == 'payment_intent.succeeded':
-        payment_intent = event['data']['object']
-        print(payment_intent)
-        # ... handle other event types
-    else:
-        print('Unhandled event type {}'.format(event['type']))
-
-    return JsonResponse({'success': True})
