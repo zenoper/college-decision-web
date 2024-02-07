@@ -64,7 +64,10 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
     smtp_server.login(smtp_username, smtp_password)
 
     # Send the email
-    smtp_server.sendmail(sender_email, receiver_email, message.as_string())
+    try:
+        smtp_server.sendmail(sender_email, receiver_email, message.as_string())
+    except Exception as e:
+        print(e)
 
     # Disconnect from the server
     smtp_server.quit()
