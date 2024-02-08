@@ -16,7 +16,7 @@ from environs import Env
 env = Env()
 env.read_env()
 
-CSRF_TRUSTED_ORIGINS = ['https://www.college-decision.com']
+CSRF_TRUSTED_ORIGINS = ['https://www.college-decision.com', 'https://college-decision.com']
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,7 +32,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.college-decision.com', 'college-decision.com']
+ALLOWED_HOSTS = ['www.college-decision.com', 'college-decision.com', "127.0.0.1"]
 
 
 
