@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8014e219-4b32-45d6-8346-eb24636a1b83" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/college_decision/templates/payments.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/payments.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/college_decision/templates/pricing.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/pricing.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/templates/confirmation.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/confirmation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/collegedecisionweb/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/collegedecisionweb/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +100,7 @@
       <updated>1705711253073</updated>
       <workItem from="1705711255846" duration="50827000" />
       <workItem from="1706680303607" duration="4000" />
-      <workItem from="1707275682665" duration="15627000" />
+      <workItem from="1707275682665" duration="18311000" />
     </task>
     <servers />
   </component>
