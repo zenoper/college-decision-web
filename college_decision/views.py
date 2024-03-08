@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .send_email import send_email
+import re
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -21,26 +22,29 @@ def letter(request):
 
 def submitted_info(request):
     if request.method == 'POST':
+        EMAIL_REGEX = r'[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+'
+
         full_name = request.POST.get('full_name')
         email = request.POST.get('email')
         university = request.POST.get('university')
         decision = request.POST.get('decision')
         university_cap = university.capitalize() + ' ' + "Office of Undergraduate Admissions"
 
-        print(full_name, email, university, decision, university_cap)
+        if re.match(EMAIL_REGEX, email):
+            try:
+                send_email(sender_name=university_cap, receiver_email=email, first_name=full_name, decision=decision, university=university)
+            except Exception as e:
+                print(f"error : {e}")
 
-        try:
-            send_email(sender_name=university_cap, receiver_email=email, first_name=full_name, decision=decision, university=university)
-            print("sent!")
-        except Exception as e:
-            print(f"error : {e}")
-
-        return render(request, 'confirmation.html')
+            return render(request, 'confirmation.html')
+        else:
+            return render(request, 'invalid_email.html')
 
     return render(request, 'send_letter.html')
 
 
-def peasant(request):
-    return render(request, 'payments.html')
+def invalid_email(request):
+    return render(request, 'invalid_email.html')
+
 
 
