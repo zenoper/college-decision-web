@@ -1,0 +1,26 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invalid Email</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta name="google-adsense-account" content="ca-pub-7002383551009684">
+    <link rel="icon" type="image/x-icon" href="{% static 'flash.ico' %}" />
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7002383551009684"
+     crossorigin="anonymous"></script>
+
+</head>
+<body class="flex items-center justify-center h-screen">
+    <div class="text-center">
+        <h1 class="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">Invalid Email provided!</h1>
+        <h2 class="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">Please, go back and provide a valid email!</h2>
+        <!-- Button to redirect to the main page -->
+        <a href="{% url 'send_letter' %}" class="mt-8 inline-block px-6 py-3 text-lg font-semibold text-white bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50">
+            Generate Letter
+        </a>
+
+    </div>
+</body>
+</html>
