@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8014e219-4b32-45d6-8346-eb24636a1b83" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/college_decision/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/college_decision/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/templates/confirmation.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/confirmation.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/templates/invalid_email.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/invalid_email.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/college_decision/templates/send_letter.html" beforeDir="false" afterPath="$PROJECT_DIR$/college_decision/templates/send_letter.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,11 +110,25 @@
       <workItem from="1707442230136" duration="4580000" />
       <workItem from="1707635514199" duration="1691000" />
       <workItem from="1707713992850" duration="3033000" />
-      <workItem from="1709912272552" duration="768000" />
+      <workItem from="1709912272552" duration="1422000" />
+      <workItem from="1710136537239" duration="10000" />
+      <workItem from="1711024973795" duration="11000" />
+      <workItem from="1711024992700" duration="7583000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/college_decision/views.py</url>
+          <line>36</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
