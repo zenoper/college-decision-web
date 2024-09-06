@@ -6,5 +6,11 @@ urlpatterns = [
     # path('pricing/', views.pricing, name='pricing'),
     path('send_letter/', views.letter, name='send_letter'),
     path('send_letter/submit', views.submitted_info, name="submitted_info"),
-    path('invalid_email/', views.invalid_email, name='invalid_email')
+    path('invalid_email/', views.invalid_email, name='invalid_email'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('create-checkout-session', views.create_checkout_session, name='create_checkout_session'),
+    path('success/', views.success, name='success'),
+    path('cancel/', views.cancel, name='cancel'),
+    path('stripe/webhook/', views.stripe_webhook, name='stripe-webhook'),
+    path('pay_bruh/', views.pay_bruh, name='pay_bruh'),
 ]
