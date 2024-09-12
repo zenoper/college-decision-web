@@ -36,6 +36,7 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
     smtp_username = env.str("SMTP_USERNAME")
     smtp_password = env.str("SMTP_PASSWORD")
     aws_region = env.str("AWS_REGION")
+    print(sender_name, receiver_email, first_name, decision, university)
 
     # Replace with the verified email address associated with your SES account
     sender_email = 'simulator@college-decision.com'

@@ -10,7 +10,15 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import Payment
 
-stripe.api_key = 'sk_test_51OcOkAH7wZCCmn5aCIr3JMdMXXThlfWdA6rtWqp5KhrrE5771hVSnP11B0eMpBYh89ghWd6JaIMy81BONTCB69K200j9W7Y3zT'
+import logging
+logger = logging.getLogger(__name__)
+
+from environs import Env
+env = Env()
+env.read_env()
+
+stripe.api_key = env.str("STRIPE_KEY")
+
 
 def home(request):
     return render(request, 'index.html')
@@ -33,9 +41,8 @@ def submitted_info(request):
         university = request.POST.get('university')
         decision = request.POST.get('decision')
         university_cap = university.capitalize() + ' ' + "Office of Undergraduate Admissions"
-        email_to = request.POST.get('email_to')
-
-        payment = Payment.objects.filter(user_identifier=email).first()
+        email_to = request.POST.get('alternate_email')
+        payment = Payment.objects.filter(user_email=email).first()
 
         if re.match(EMAIL_REGEX, email_to):
 
@@ -81,6 +88,7 @@ def create_checkout_session(request):
     YOUR_DOMAIN = "https://www.college-decision.com/"  # Replace with your domain
 
     try:
+
         checkout_session = stripe.checkout.Session.create(
             line_items=[
                 {
@@ -88,14 +96,13 @@ def create_checkout_session(request):
                     'price': 'price_1OceKfH7wZCCmn5aMh7Izt0I',
                     'quantity': 3,
                 },
-                {
-                    'price': 'price_1OcdziH7wZCCmn5axANeg9JL',
-                    'quantity': 1,
-                }
             ],
             mode='payment',
             success_url=YOUR_DOMAIN + '/send_letter/',
             cancel_url=YOUR_DOMAIN + '/cancel/',
+            metadata={
+                'emails_purchased': 3,  # Set the number of emails purchased here
+            }
         )
     except Exception as e:
         return JsonResponse({'error': str(e)})
@@ -107,7 +114,7 @@ def create_checkout_session(request):
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = 'whsec_ee8fcf7616f27578757c8e44f4e02bf39e1ea96e0b87a3a7d92838776a326e45'
+    endpoint_secret = env.str("ENDPOINT_SECRET")
 
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, endpoint_secret)
@@ -118,13 +125,16 @@ def stripe_webhook(request):
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        user_email = session['customer_email']  # Extract the email from the session
-        emails_purchased = int(session['metadata']['emails_purchased'])  # Example metadata
-
+        customer_email = session.get('customer_details', {}).get('email')
+        emails_purchased = int(session['metadata']['emails_purchased'])  # Example metadat
         # Update or create the payment record for the user
-        payment, created = Payment.objects.get_or_create(user_identifier=user_email)
-        payment.emails_purchased += emails_purchased
-        payment.save()
+        try:
+            payment, created = Payment.objects.get_or_create(user_email=customer_email)
+            payment.emails_purchased += emails_purchased
+            payment.save()
+            logger.info(f"Payment updated for {customer_email}: {emails_purchased} emails purchased")
+        except Exception as e:
+            logger.error(f"Error updating payment: {str(e)}")
 
     return JsonResponse({'status': 'success'}, status=200)
 
