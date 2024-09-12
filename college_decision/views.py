@@ -85,7 +85,7 @@ def checkout(request):
 
 @require_POST
 def create_checkout_session(request):
-    YOUR_DOMAIN = "https://www.college-decision.com/"  # Replace with your domain
+    YOUR_DOMAIN = "https://www.college-decision.com"  # Replace with your domain
 
     try:
 
