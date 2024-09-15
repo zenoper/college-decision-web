@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .send_email import send_email
 import re
+from django.http import HttpResponse
 
 import stripe
 from django.conf import settings
@@ -29,11 +30,29 @@ def pricing(request):
 
 
 def letter(request):
-    return render(request, 'send_letter.html')
+    credits = request.COOKIES.get('credits')
+
+    if credits:
+        try:
+            credits = int(credits)  # Convert the string to an integer
+
+            if credits > 0:
+                # User has credits left, decrease by 1 and continue
+                response = render(request, 'send_letter.html')
+            else:
+                # No credits left, redirect to the payment page
+                return redirect('/checkout/')
+        except ValueError:
+            # If there's an issue with the cookie value, reset and redirect to payment
+            return redirect('/checkout/')
+    else:
+        # If no credits cookie is found, redirect to the payment page
+        return redirect('/checkout/')
 
 
 def submitted_info(request):
     if request.method == 'POST':
+        credits = request.COOKIES.get('credits')  # Get the credits from the cookie
         EMAIL_REGEX = r'[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+'
 
         full_name = request.POST.get('full_name')
@@ -45,24 +64,36 @@ def submitted_info(request):
         payment = Payment.objects.filter(user_email=email).first()
 
         if re.match(EMAIL_REGEX, email_to):
-
-            if payment and payment.emails_purchased > payment.emails_sent:
-                # Allow sending email
-                payment.emails_sent += 1
-                payment.save()
-
+            # Check if the user has enough credits
+            if credits and payment and payment.emails_purchased > payment.emails_sent:
                 try:
+                    # Send the email
                     send_email(sender_name=university_cap, receiver_email=email_to, first_name=full_name, decision=decision, university=university)
+
+                    # After the email is successfully sent, update emails_sent in the database
+                    payment.emails_sent += 1
+                    payment.save()
+
+                    # Decrease the credits in the cookie
+                    credits = int(credits)
+                    if credits > 0:
+                        response = render(request, 'confirmation.html')
+                        response.set_cookie('credits', credits - 1, max_age=60 * 60 * 24 * 30)  # Decrease credits and update cookie
+                        return response
+
                 except Exception as e:
                     print(f"error : {e}")
+                    return render(request, 'error.html')
 
-                return render(request, 'confirmation.html')
             else:
+                # Not enough credits, redirect to the payment page
                 return render(request, 'pay_bro.html')
         else:
+            # Invalid email format
             return render(request, 'invalid_email.html')
 
     return render(request, 'send_letter.html')
+
 
 
 def invalid_email(request):
@@ -133,6 +164,9 @@ def stripe_webhook(request):
             payment.emails_purchased += emails_purchased
             payment.save()
             logger.info(f"Payment updated for {customer_email}: {emails_purchased} emails purchased")
+            # Set a cookie in the response that indicates the user has paid
+            response = HttpResponse("Payment successful")
+            response.set_cookie('credits', emails_purchased, max_age=60 * 60 * 24 * 30)  # 30 days validity
         except Exception as e:
             logger.error(f"Error updating payment: {str(e)}")
 
