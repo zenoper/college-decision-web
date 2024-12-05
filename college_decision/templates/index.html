@@ -75,8 +75,8 @@
                     <div class="relative inline-flex mt-10 group">
                     <div class="absolute transitiona-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
 
-                    <a href="{% url 'send_letter' %}" title="" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" role="button">
-                        Start generating letters
+                    <a id="generateButton" href="{% url 'send_letter' %}" title="" class="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900" role="button">
+                    Start generating letters
                     </a>
                 </div>
                 </div>
@@ -494,6 +494,21 @@
         </section>
 
     </footer>
+    <script>
+    function checkCredits() {
+        const credits = parseInt(document.cookie.split('; ').find(row => row.startsWith('emailCredits='))?.split('=')[1] || '0');
+        if (credits > 0) {
+            // User has credits, redirect to main function
+            window.location.href = '/letter/';
+        } else {
+            // User has no credits, redirect to payment page
+            window.location.href = '/checkout/';
+        }
+    }
+
+    // Add this onclick event to your "Generate Letters" button
+    document.getElementById('generateButton').onclick = checkCredits;
+    </script>
 
 </body>
 

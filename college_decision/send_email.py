@@ -1,11 +1,10 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
 from environs import Env
+
 env = Env()
 env.read_env()
-
 
 university_dictionary = {
     'Acceptance': {
@@ -32,43 +31,48 @@ university_dictionary = {
 
 
 def send_email(sender_name, receiver_email, first_name, decision, university):
-    # Replace with your SMTP credentials and SES region
-    smtp_username = env.str("SMTP_USERNAME")
-    smtp_password = env.str("SMTP_PASSWORD")
-    aws_region = env.str("AWS_REGION")
-    print(sender_name, receiver_email, first_name, decision, university)
-
-    # Replace with the verified email address associated with your SES account
-    sender_email = 'simulator@college-decision.com'
-
-    with open(university_dictionary[decision][university], 'r') as f:
-        html_body = f.read()
-
-    # Add dynamic content to HTML body
-    html_body = html_body.replace('Dear,', f'Dear {first_name},')
-
-    if university == 'uchicago':
-        sender_name = "UChicago Office of Undergraduate Admissions"
-
-    # Set up the email message
-    message = MIMEMultipart("alternative")
-    message["From"] = f"{sender_name} <{sender_email}>"
-    message["To"] = receiver_email
-    message["Subject"] = "View Update to your Application!"
-    message.attach(MIMEText(html_body, "html"))
-
-    # Connect to the Amazon SES SMTP server
-    smtp_server = smtplib.SMTP('email-smtp.' + aws_region + '.amazonaws.com', 587)
-    smtp_server.starttls()
-
-    # Log in to the SMTP server
-    smtp_server.login(smtp_username, smtp_password)
-
-    # Send the email
     try:
-        smtp_server.sendmail(sender_email, receiver_email, message.as_string())
-    except Exception as e:
-        print(e)
+        # SMTP Configuration - same as test.py
+        smtp_username = env.str("SMTP_USERNAME")
+        smtp_password = env.str("SMTP_PASSWORD")
+        aws_region = env.str("AWS_REGION")
+        smtp_endpoint = f'email-smtp.{aws_region}.amazonaws.com'
+        # print(f"username: {type(smtp_username)}, password: {type(smtp_password)}, aws-region: {type(aws_region)}, endpoint: {type(smtp_endpoint)}")
+        # print(f"username: {smtp_username}, password: {smtp_password}, aws-region: {aws_region}, endpoint: {smtp_endpoint}")
 
-    # Disconnect from the server
-    smtp_server.quit()
+        # Get HTML content
+        with open(university_dictionary[decision][university], 'r') as f:
+            html_body = f.read()
+
+        # Add dynamic content to HTML body
+        html_body = html_body.replace('Dear,', f'Dear {first_name},')
+
+        # Create message
+        message = MIMEMultipart()
+        message["From"] = f"{sender_name} <simulator@college-decision.com>"
+        message["To"] = receiver_email
+        message["Subject"] = "View Update to your Application!"
+        message.attach(MIMEText(html_body, "html"))
+
+        # Connect and send - same as test.py
+        print("Connecting to SMTP server...")
+        server = smtplib.SMTP(smtp_endpoint, 587)
+        server.starttls()
+        print("TLS started")
+        
+        print("Attempting login...")
+        server.login(smtp_username, smtp_password)
+        print("Login successful!")
+        
+        print("Sending email...")
+        server.sendmail("simulator@college-decision.com", receiver_email, message.as_string())
+        print("Email sent successfully!")
+        
+        server.quit()
+
+    except Exception as e:
+        print("Error occurred:")
+        print(f"Type: {type(e)}")
+        print(f"Args: {e.args}")
+        print(f"Error: {str(e)}")
+        raise

@@ -32,7 +32,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.college-decision.com', 'college-decision.com', "127.0.0.1", 'd391-31-148-163-97.ngrok-free.app']
+ALLOWED_HOSTS = ['www.college-decision.com', 'college-decision.com', "127.0.0.1", 'd391-31-148-163-97.ngrok-free.app', 'localhost']
 
 
 
@@ -138,3 +138,47 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Logging Configuration
+# LOGGING = {
+#     'version': 1,
+    
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '{levelname} {asctime} {module} {message}',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'verbose',
+#         },
+#     },
+#     'root': {
+#         'handlers': ['console'],
+#         'level': 'INFO',
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'college_decision': {  # This will catch all loggers in your app
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
+
+# Email Configuration
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = f'email-smtp.{env.str("AWS_REGION")}.amazonaws.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = env.str('SMTP_USERNAME')
+# EMAIL_HOST_PASSWORD = env.str('SMTP_PASSWORD')
+# DEFAULT_FROM_EMAIL = 'simulator@college-decision.com'

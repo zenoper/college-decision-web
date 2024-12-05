@@ -11,9 +11,6 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from .models import Payment
 
-import logging
-logger = logging.getLogger(__name__)
-
 from environs import Env
 env = Env()
 env.read_env()
@@ -30,29 +27,16 @@ def pricing(request):
 
 
 def letter(request):
-    credits = request.COOKIES.get('credits')
-
-    if credits:
-        try:
-            credits = int(credits)  # Convert the string to an integer
-
-            if credits > 0:
-                # User has credits left, decrease by 1 and continue
-                response = render(request, 'send_letter.html')
-            else:
-                # No credits left, redirect to the payment page
-                return redirect('/checkout/')
-        except ValueError:
-            # If there's an issue with the cookie value, reset and redirect to payment
-            return redirect('/checkout/')
+    credits = int(request.COOKIES.get('emailCredits', 0))
+    if credits > 0:
+        return render(request, 'send_letter.html')
     else:
-        # If no credits cookie is found, redirect to the payment page
         return redirect('/checkout/')
 
 
 def submitted_info(request):
     if request.method == 'POST':
-        credits = request.COOKIES.get('credits')  # Get the credits from the cookie
+        credits = int(request.COOKIES.get('emailCredits', 0))
         EMAIL_REGEX = r'[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+'
 
         full_name = request.POST.get('full_name')
@@ -65,6 +49,7 @@ def submitted_info(request):
 
         if re.match(EMAIL_REGEX, email_to):
             # Check if the user has enough credits
+            # print(credits, payment, payment.emails_purchased, payment.emails_sent)
             if credits and payment and payment.emails_purchased > payment.emails_sent:
                 try:
                     # Send the email
@@ -77,13 +62,18 @@ def submitted_info(request):
                     # Decrease the credits in the cookie
                     credits = int(credits)
                     if credits > 0:
+                        # After successfully sending the email, decrease the credits
+                        new_credits = credits - 1
                         response = render(request, 'confirmation.html')
-                        response.set_cookie('credits', credits - 1, max_age=60 * 60 * 24 * 30)  # Decrease credits and update cookie
+                        response.set_cookie('emailCredits', str(new_credits), max_age=60 * 60 * 24 * 30)
                         return response
 
                 except Exception as e:
-                    print(f"error : {e}")
-                    return render(request, 'error.html')
+                    print("Detailed error info:")
+                    print(f"Type: {type(e)}")
+                    print(f"Args: {e.args}")
+                    print(f"Error: {str(e)}")
+                    raise
 
             else:
                 # Not enough credits, redirect to the payment page
@@ -93,7 +83,6 @@ def submitted_info(request):
             return render(request, 'invalid_email.html')
 
     return render(request, 'send_letter.html')
-
 
 
 def invalid_email(request):
@@ -116,30 +105,27 @@ def checkout(request):
 
 @require_POST
 def create_checkout_session(request):
-    YOUR_DOMAIN = "https://www.college-decision.com"  # Replace with your domain
-
+    YOUR_DOMAIN = "https://college-decision.com"
     try:
-
         checkout_session = stripe.checkout.Session.create(
             line_items=[
                 {
-                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
                     'price': 'price_1OceKfH7wZCCmn5aMh7Izt0I',
                     'quantity': 3,
                 },
             ],
             mode='payment',
-            success_url=YOUR_DOMAIN + '/send_letter/',
+            success_url=YOUR_DOMAIN + '/payment-success/?session_id={CHECKOUT_SESSION_ID}',
             cancel_url=YOUR_DOMAIN + '/cancel/',
             metadata={
-                'emails_purchased': 3,  # Set the number of emails purchased here
+                'emails_purchased': 3,
             }
         )
     except Exception as e:
         return JsonResponse({'error': str(e)})
 
     return redirect(checkout_session.url)
-
+    
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -157,24 +143,56 @@ def stripe_webhook(request):
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         customer_email = session.get('customer_details', {}).get('email')
-        emails_purchased = int(session['metadata']['emails_purchased'])  # Example metadat
-        # Update or create the payment record for the user
+        emails_purchased = int(session['metadata']['emails_purchased'])
+        print(f"customer email : {customer_email}, emails purchased : {emails_purchased}, session : {session}")
         try:
-            payment, created = Payment.objects.get_or_create(user_email=customer_email)
+            payment, created = Payment.objects.get_or_create(
+                user_email=customer_email
+            )
             payment.emails_purchased += emails_purchased
             payment.save()
-            logger.info(f"Payment updated for {customer_email}: {emails_purchased} emails purchased")
-            # Set a cookie in the response that indicates the user has paid
-            response = HttpResponse("Payment successful")
-            response.set_cookie('credits', emails_purchased, max_age=60 * 60 * 24 * 30)  # 30 days validity
+            
+            # Store the session ID in metadata for later use
+            session.metadata['credits_to_add'] = str(emails_purchased)
+            session.save()
+            
+            print(f"Payment updated for {customer_email}: {emails_purchased} emails purchased")
         except Exception as e:
-            logger.error(f"Error updating payment: {str(e)}")
+            print(f"Error updating payment: {str(e)}")
 
     return JsonResponse({'status': 'success'}, status=200)
 
 
-def success(request):
-    return render(request, 'success.html')
+def payment_success(request):
+    session_id = request.GET.get('session_id')
+
+    if not session_id:
+        return redirect('error_page')
+ 
+    try:
+        # Retrieve the session from Stripe
+        session = stripe.checkout.Session.retrieve(session_id)
+
+        # Get the number of credits purchased from the session metadata
+        credits_purchased = int(session.metadata.get('emails_purchased', 0))
+
+        # Get current credits from cookie
+        current_credits = int(request.COOKIES.get('emailCredits', 0))
+
+        # Calculate new total credits
+        new_credits = current_credits + credits_purchased
+
+        # Render the success page
+        response = render(request, 'success.html')
+        print(f"new credits set : {new_credits}")
+        # Set the new credit amount in the cookie
+        response.set_cookie('emailCredits', str(new_credits), max_age=60*60*24*30)  # Set cookie for 30 days
+
+        return response
+
+    except Exception as e:
+        print(f"Error in payment_success: {str(e)}")
+        return redirect('error_page')
 
 
 def cancel(request):
@@ -183,5 +201,9 @@ def cancel(request):
 
 def pay_bruh(request):
     return render(request, 'pay_bro.html')
+
+
+def error_page(request):
+    return render(request, 'error.html')
 
 
