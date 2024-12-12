@@ -207,3 +207,7 @@ def error_page(request):
     return render(request, 'error.html')
 
 
+def prices(request):
+    return render(request, 'pricing.html')
+
+
