@@ -12,22 +12,58 @@
      crossorigin="anonymous"></script>
 
 </head>
-<body class="flex flex-col items-center justify-center h-screen">
-    <div class="text-center">
+<body class="flex flex-col items-center justify-center min-h-screen">
+    <div class="text-center mb-8">
         <h1 class="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">Invalid Email provided!</h1>
         <h2 class="mt-5 text-4xl font-bold leading-tight text-gray-900 sm:text-5xl sm:leading-tight lg:text-6xl lg:leading-tight font-pj">Please, go back and provide a valid email!</h2>
         <a href="{% url 'send_letter' %}" class="mt-8 inline-block px-6 py-3 text-lg font-semibold text-white bg-gray-900 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 focus:ring-opacity-50">
             Generate Letter
         </a>
     </div>
-    <div class="relative px-4 mt-10 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-        <div class="max-w-3xl mx-auto text-center">
-            <p class="max-w-2xl mx-auto mt-6 text-lg leading-7 text-gray-700 font-inter">Please note: Every letter is a fictional simulation intended for amusement and educational purposes, and does not reflect actual admission outcomes. Engage with Our Decision Letter Simulations thoughtfully—it's all meant in playful earnest!</p>
-            <div class="relative inline-flex mt-10 group">
-                <div class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
-            </div>
-        </div>
+
+    <!-- Ad text with more spacing and visibility -->
+    <div class="w-full flex justify-around mt-12 mb-8">
+        <span class="text-lg text-gray-500">Your ad could have been here. Find contacts at the bottom</span>
+        <span class="text-lg text-gray-500">Your ad could have been here. </span>
     </div>
+
+    <footer>
+        <section class="py-10 bg-gray-50 sm:pt-16 lg:pt-24">
+            <div class="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+                <div class="grid grid-cols-2 md:col-span-3 lg:grid-cols-6 gap-y-16 gap-x-12">
+                    <div class="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
+                        <p class="max-w-xl mx-auto text-base leading-relaxed text-gray-600 mt-7">Our emails are crafted with a twist of humor to underscore the importance of fact-checking and critical thinking. If they caught you off-guard, take it as a playful nudge towards questioning and verifying information in our digital world. Remember, it's all in the spirit of learning—with a smile!</p>
+                        <ul class="flex items-center space-x-3 mt-9">
+                            <li>
+                                <a href="mailto:mukhammadkodirmakhmudjanov@gmail.com" title="Email" class="flex items-center justify-center text-white transition-all duration-200 bg-gray-800 rounded-full w-7 h-7 hover:bg-blue-600 focus:bg-blue-600">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.linkedin.com/in/zenoper/" title="" class="flex items-center justify-center text-white transition-all duration-200 bg-gray-800 rounded-full w-7 h-7 hover:bg-blue-600 focus:bg-blue-600">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="12" fill="black"/>
+                                        <path fill="white" d="M19 0h-14c-2.8 0-5 2.2-5 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5v-14c0-2.8-2.2-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.3c-1 0-1.8-.8-1.8-1.8s.8-1.8 1.8-1.8 1.8.8 1.8 1.8-.8 1.8-1.8 1.8zm13.5 12.3h-3v-5.6c0-3.4-4-3.1-4 0v5.6h-3v-11h3v1.5c1.4-2.6 7-2.8 7 2.5v7z"/>
+                                    </svg>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/zenoper" title="" class="flex items-center justify-center text-white transition-all duration-200 bg-gray-800 rounded-full w-7 h-7 hover:bg-blue-600 focus:bg-blue-600">
+                                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"></path>
+                                    </svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="mt-16 mb-10 border-gray-200" />
+                <p class="text-sm text-center text-gray-600 mb-10 mt-3">© Made by MK with ❤️</p>
+            </div>
+        </section>
+    </footer>
 </body>
 
 </html>
