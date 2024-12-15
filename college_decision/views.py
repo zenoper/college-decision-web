@@ -62,6 +62,11 @@ def submitted_info(request):
         if any(blocked in email_domain for blocked in BLOCKED_DOMAINS):
             print("blocked domain")
             return render(request, 'invalid_email.html')
+            
+        # New check: Block emails containing "edu"
+        if "edu" in email_to.lower():
+            print("edu email blocked")
+            return render(request, 'invalid_email.html')
         
          # 4. Additional validation for educational institutions
         # ALLOWED_EDU_DOMAINS = ['.edu', '.k12.', '.ac.', '.sch.']
