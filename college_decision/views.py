@@ -36,9 +36,7 @@ def letter(request):
 
 def submitted_info(request):
     if request.method == 'POST':
-        # credits = int(request.COOKIES.get('emailCredits', 0))
         EMAIL_REGEX = r'[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+'
-
 
         email_to = request.POST.get('email', '').strip().lower()
         # 1. Basic validation checks
@@ -46,7 +44,6 @@ def submitted_info(request):
             print("no email")
             return render(request, 'invalid_email.html')
         
-
         # 2. Regex check
         if not re.match(EMAIL_REGEX, email_to):
             print("regex fail")
@@ -83,37 +80,21 @@ def submitted_info(request):
             return render(request, 'rate_limit.html')
         cache.set(cache_key, attempts + 1, 3600)  # 1 hour expiry
 
-        # If all checks pass, proceed with the rest of your code
+        # Get form data
         full_name = request.POST.get('full_name')
-        # email = request.POST.get('email')
         university = request.POST.get('university')
         decision = request.POST.get('decision')
         university_cap = university.capitalize() + ' ' + "Office of Undergraduate Admissions"
-        # payment = Payment.objects.filter(user_email=email).first()
 
-        # if re.match(EMAIL_REGEX, email_to):
-            # Check if the user has enough credits
-            # print(credits, payment, payment.emails_purchased, payment.emails_sent)
-            # if credits and payment and payment.emails_purchased > payment.emails_sent:
-        email_sent = False
+        # First try to send the email
+        send_email(sender_name=university_cap, 
+                  receiver_email=email_to, 
+                  first_name=full_name, 
+                  decision=decision, 
+                  university=university)
+
+        # Since email was sent successfully, try to update stats but don't fail if it errors
         try:
-            # First try to send the email
-            send_email(sender_name=university_cap, 
-                      receiver_email=email_to, 
-                      first_name=full_name, 
-                      decision=decision, 
-                      university=university)
-            email_sent = True
-
-        except Exception as e:
-            print("Detailed error info:")
-            print(f"Type: {type(e)}")
-            print(f"Args: {e.args}")
-            print(f"Error: {str(e)}")
-            raise
-
-        # Only update statistics if email was sent successfully
-        if email_sent:
             # Update letter generation stats
             letter_stats, created = LetterGeneration.objects.get_or_create(
                 email=email_to,
@@ -136,15 +117,11 @@ def submitted_info(request):
             if not _:  # if the object already existed
                 uni_decision.decision_count += 1
                 uni_decision.save()
+        except:
+            # If database operations fail, we still want to show success since email was sent
+            pass
 
-            response = render(request, 'confirmation.html')
-            return response
-        # else:
-            # Not enough credits, redirect to the payment page
-            # return render(request, 'pay_bro.html')
-        # else:
-        #     # Invalid email format
-        #     return render(request, 'invalid_email.html')
+        return render(request, 'confirmation.html')
 
     return render(request, 'send_letter.html')
 
