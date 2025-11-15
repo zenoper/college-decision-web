@@ -1,4 +1,5 @@
 import smtplib
+import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from environs import Env
@@ -7,6 +8,9 @@ from .university_config import UNIVERSITY_CONFIG
 
 env = Env()
 env.read_env()
+
+# Get logger for this module
+logger = logging.getLogger(__name__)
 
 university_dictionary = {
     'Acceptance': {
@@ -69,26 +73,26 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
         message.attach(MIMEText(html_body, "html"))
 
         # Connect and send - same as test.py
-        print("Connecting to SMTP server...")
+        logger.info("Connecting to SMTP server...")
         server = smtplib.SMTP(smtp_endpoint, 587)
         server.starttls()
-        print("TLS started")
+        logger.info("TLS started")
         
-        print("Attempting login...")
+        logger.info("Attempting login...")
         server.login(smtp_username, smtp_password)
-        print("Login successful!")
+        logger.info("Login successful!")
         
-        print("Sending email...")
+        logger.info("Sending email...")
         server.sendmail("simulator@college-decision.com", receiver_email, message.as_string())
-        print("Email sent successfully!")
+        logger.info("Email sent successfully!")
         
         server.quit()
 
     except Exception as e:
-        print("Error occurred:")
-        print(f"Type: {type(e)}")
-        print(f"Args: {e.args}")
-        print(f"Error: {str(e)}")
+        logger.error("Error occurred:")
+        logger.error(f"Type: {type(e)}")
+        logger.error(f"Args: {e.args}")
+        logger.error(f"Error: {str(e)}")
         raise
 
 
@@ -127,24 +131,24 @@ def send_notification_email(receiver_email, full_name, university, portal_url, a
         smtp_endpoint = f'email-smtp.{aws_region}.amazonaws.com'
         
         # Connect and send
-        print("Connecting to SMTP server...")
+        logger.info("Connecting to SMTP server...")
         server = smtplib.SMTP(smtp_endpoint, 587)
         server.starttls()
-        print("TLS started")
+        logger.info("TLS started")
         
-        print("Attempting login...")
+        logger.info("Attempting login...")
         server.login(smtp_username, smtp_password)
-        print("Login successful!")
+        logger.info("Login successful!")
         
-        print("Sending notification email...")
+        logger.info("Sending notification email...")
         server.sendmail("simulator@college-decision.com", receiver_email, message.as_string())
-        print("Notification email sent successfully!")
+        logger.info("Notification email sent successfully!")
         
         server.quit()
         
     except Exception as e:
-        print("Error occurred while sending notification email:")
-        print(f"Type: {type(e)}")
-        print(f"Args: {e.args}")
-        print(f"Error: {str(e)}")
+        logger.error("Error occurred while sending notification email:")
+        logger.error(f"Type: {type(e)}")
+        logger.error(f"Args: {e.args}")
+        logger.error(f"Error: {str(e)}")
         raise

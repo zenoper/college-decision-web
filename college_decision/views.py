@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .send_email import send_email, send_notification_email
 import re
+import logging
 from django.http import HttpResponse
 
 import stripe
@@ -16,6 +17,9 @@ env = Env()
 env.read_env()
 
 stripe.api_key = env.str("STRIPE_KEY")
+
+# Get logger for this module
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -41,12 +45,12 @@ def submitted_info(request):
         email_to = request.POST.get('email', '').strip().lower()
         # 1. Basic validation checks
         if not email_to:
-            print("no email")
+            logger.warning("No email provided in submitted_info")
             return render(request, 'invalid_email.html')
         
         # 2. Regex check
         if not re.match(EMAIL_REGEX, email_to):
-            print("regex fail")
+            logger.warning(f"Invalid email format: {email_to}")
             return render(request, 'invalid_email.html')
         
         # 3. Block common disposable email domains
@@ -57,12 +61,12 @@ def submitted_info(request):
         ]
         email_domain = email_to.split('@')[1]
         if any(blocked in email_domain for blocked in BLOCKED_DOMAINS):
-            print("blocked domain")
+            logger.warning(f"Blocked domain: {email_domain}")
             return render(request, 'invalid_email.html')
             
         # New check: Block emails containing "edu"
         if "edu" in email_to.lower():
-            print("edu email blocked")
+            logger.warning(f"Edu email blocked: {email_to}")
             return render(request, 'invalid_email.html')
         
          # 4. Additional validation for educational institutions
@@ -76,7 +80,7 @@ def submitted_info(request):
         cache_key = f'email_attempts_{request.META.get("REMOTE_ADDR")}'
         attempts = cache.get(cache_key, 0)
         if attempts > 5:  # Max 5 attempts per hour
-            print("hitting rate limit")
+            logger.warning(f"Rate limit hit for IP: {request.META.get('REMOTE_ADDR')}")
             return render(request, 'rate_limit.html')
         cache.set(cache_key, attempts + 1, 3600)  # 1 hour expiry
 
@@ -145,7 +149,8 @@ def submitted_info(request):
             if not _:  # if the object already existed
                 uni_decision.decision_count += 1
                 uni_decision.save()
-        except:
+        except Exception as e:
+            logger.error(f"Error updating stats for email {email_to}: {e}")
             # If database operations fail, we still want to show success since email was sent
             pass
 
