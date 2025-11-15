@@ -16,10 +16,10 @@ from environs import Env
 env = Env()
 env.read_env()
 
-stripe.api_key = env.str("STRIPE_KEY")
-
 # Get logger for this module
 logger = logging.getLogger(__name__)
+
+stripe.api_key = env.str("STRIPE_KEY")
 
 
 def home(request):

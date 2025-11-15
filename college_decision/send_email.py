@@ -6,11 +6,11 @@ from environs import Env
 from django.template.loader import render_to_string
 from .university_config import UNIVERSITY_CONFIG
 
-env = Env()
-env.read_env()
-
 # Get logger for this module
 logger = logging.getLogger(__name__)
+
+env = Env()
+env.read_env()
 
 university_dictionary = {
     'Acceptance': {
