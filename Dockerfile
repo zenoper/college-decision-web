@@ -43,4 +43,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/ || exit 1
 
 # Run migrations and start application
-CMD ["sh", "-c", "python manage.py migrate --no-input --run-syncdb && python manage.py collectstatic --no-input && gunicorn collegedecisionweb.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "python manage.py migrate --no-input --run-syncdb && python manage.py collectstatic --no-input && gunicorn collegedecisionweb.wsgi:application --bind 0.0.0.0:8000"]
