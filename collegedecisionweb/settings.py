@@ -96,10 +96,21 @@ WSGI_APPLICATION = 'collegedecisionweb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# Check if we're using PostgreSQL (for Docker/production) or SQLite (for local development)
 import os
+import dj_database_url
 
-if os.environ.get('DB_ENGINE') == 'postgresql':
+# Check for DATABASE_URL first (Railway/Heroku), then fall back to individual vars or SQLite
+if os.environ.get('DATABASE_URL'):
+    # Parse DATABASE_URL (Railway/Heroku format)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+elif os.environ.get('DB_ENGINE') == 'postgresql':
+    # Individual environment variables (docker-compose)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -111,6 +122,7 @@ if os.environ.get('DB_ENGINE') == 'postgresql':
         }
     }
 else:
+    # SQLite for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
