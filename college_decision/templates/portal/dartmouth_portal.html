@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Portal - {{university_config.full_name}}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: {{university_config.primary_color}};
+        }
+        
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            max-width: 200px;
+            max-height: 60px;
+        }
+        
+        .content {
+            padding: 30px 0;
+        }
+        
+        .application-info {
+            background-color: #f9f9f9;
+            padding:15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .decision-container {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            min-height: 200px;
+        }
+        
+        .view-decision-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .view-decision-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .decision-letter {
+            display: none;
+            text-align: left;
+            padding: 30px;
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+        }
+        
+        .letter-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .letter-content {
+            margin-bottom: 20px;
+        }
+        
+        .letter-signature {
+            margin-top: 30px;
+            text-align: right;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{university_config.logo_url}}" alt="{{university_config.full_name}}" class="logo">
+        </div>
+        
+        <div class="content">
+            <div class="application-info">
+                <p><strong>Application ID:</strong> {{application_id}}</p>
+                <p><strong>Applicant:</strong> {{full_name}}</p>
+                <p><strong>University:</strong> {{university_config.full_name}}</p>
+            </div>
+            
+            <div class="decision-container">
+                <button id="viewDecisionBtn" class="view-decision-btn">View Decision</button>
+                
+                <div id="decisionLetter" class="decision-letter">
+                    <div class="letter-header">
+                        <h2>{{university_config.full_name}}</h2>
+                    </div>
+                    
+                    <div class="letter-content">
+                        {% if decision == "Acceptance" %}
+                            <p>Dear {{full_name}},</p>
+                            <p>On behalf of the Committee on Admissions, it is my great pleasure to offer you admission to Dartmouth College. We were deeply impressed by your academic achievements, extracurricular activities, and personal qualities.</p>
+                            <p>Your application stood out among thousands of highly qualified candidates. We believe you will make significant contributions to our community and thrive in our rigorous academic environment.</p>
+                            <p>Please submit your enrollment confirmation by May 1, 2025. We look forward to welcoming you to campus next Fall.</p>
+                        {% else %}
+                            <p>Dear {{full_name}},</p>
+                            <p>Thank you for your interest in Dartmouth College. After careful consideration of your application, we regret to inform you that we are unable to offer you admission at this time.</p>
+                            <p>This decision does not reflect on your qualifications or potential. The applicant pool was exceptionally competitive, and we had to make difficult choices among many talented students.</p>
+                            <p>We wish you the best in your future academic endeavors and encourage you to continue pursuing your educational goals.</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="letter-signature">
+                        {% if decision == "Acceptance" %}
+                            <p>Lee A. Coffin<br>Dean of Admissions and Financial Aid</p>
+                        {% else %}
+                            <p>Lee A. Coffin<br>Dean of Admissions and Financial Aid</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <p>&copy; 2025 {{university_config.full_name}} Admissions Office</p>
+                <p>This is a simulated decision portal for entertainment purposes only.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confetti container (initially hidden) -->
+    <div id="confetti" class="confetti"></div>
+    
+    <script>
+        document.getElementById('viewDecisionBtn').addEventListener('click', function() {
+            // Show decision letter
+            document.getElementById('decisionLetter').style.display = 'block';
+            
+            // Hide the button
+            this.style.display = 'none';
+            
+            // Add confetti for acceptance
+            {% if decision == "Acceptance" %}
+                createConfetti();
+            {% endif %}
+        });
+        
+        {% if decision == "Acceptance" %}
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            const colors = ['#006633', '#0052A5', '#00695C', '#007EAE'];
+            
+            // Create confetti pieces
+            for (let i = 0; i < 100; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.className = 'confetti-piece';
+                
+                // Random position, color, size, and animation
+                const startPosition = Math.random() * 100;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const size = Math.random() * 8 + 5;
+                const animationDuration = Math.random() * 3 + 2;
+                const opacity = Math.random() * 0.5 + 0.5;
+                
+                confettiPiece.style.left = startPosition + '%';
+                confettiPiece.style.backgroundColor = color;
+                confettiPiece.style.width = size + 'px';
+                confettiPiece.style.height = size + 'px';
+                confettiPiece.style.opacity = opacity;
+                
+                // Random animation
+                const animations = [
+                    'fall 1s linear',
+                    'fall 1.5s linear',
+                    'fall 2s linear',
+                    'fall 3s linear'
+                ];
+                const animation = animations[Math.floor(Math.random() * animations.length)];
+                
+                confettiPiece.style.animation = animation;
+                confettiPiece.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+                
+                confettiContainer.appendChild(confettiPiece);
+            }
+            
+            // Remove confetti after animation completes
+            setTimeout(function() {
+                confettiContainer.innerHTML = '';
+            }, 5000);
+        }
+        {% endif %}
+    </script>
+</body>
+</html>

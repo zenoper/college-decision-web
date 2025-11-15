@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Status Update - {{university_name}}</title>
+    <style>
+        /* Reset styles */
+        body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+        img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
+        body { height: 100% !important; margin: 0 !important; padding: 0 !important; width: 100% !important; }
+        
+        /* Main styles */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            padding: 30px 0;
+            text-align: center;
+            border-bottom: 1px solid #eeeeee;
+        }
+        
+        .logo {
+            max-width: 250px;
+            max-height: 80px;
+        }
+        
+        .content {
+            padding: 30px 40px;
+        }
+        
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+        
+        .application-id {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 30px;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .footer {
+            padding: 30px 40px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #eeeeee;
+            font-size: 12px;
+            color: #666666;
+        }
+        
+        .contact-info {
+            margin-bottom: 20px;
+        }
+        
+        .disclaimer {
+            font-size: 11px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+        }
+        
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+            
+            .content, .footer {
+                padding: 20px !important;
+            }
+            
+            .logo {
+                max-width: 200px;
+            }
+        }
+    </style>
+    <!--[if mso]>
+    <style>
+        table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
+    </style>
+    <![endif]-->
+</head>
+<body>
+    <table class="email-container" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <!-- Header -->
+        <tr>
+            <td class="header">
+                <img src="{{university_logo_url}}" alt="{{university_name}} Logo" class="logo">
+            </td>
+        </tr>
+        
+        <!-- Content -->
+        <tr>
+            <td class="content">
+                <p class="greeting">Dear {{full_name}},</p>
+                
+                <p class="message">
+                    We are writing to inform you that there has been an update to your application status for {{university_name}}. Please log in to your application portal to view the details of this update.
+                </p>
+                
+                <p class="application-id">
+                    Application ID: {{application_id}}<br>
+                    Date of Update: {{decision_date}}
+                </p>
+                
+                <div class="button-container">
+                    <table border="0" cellspacing="0" cellpadding="0" align="center">
+                        <tr>
+                            <td bgcolor="{{university_color}}" style="border-radius: 4px;">
+                                <a href="{{portal_url}}" style="font-size: 16px; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; display: inline-block; padding: 12px 30px;">View Update</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <p class="message">
+                    If you have any questions or concerns, please don't hesitate to contact our admissions office.
+                </p>
+            </td>
+        </tr>
+        
+        <!-- Footer -->
+        <tr>
+            <td class="footer">
+                <div class="contact-info">
+                    <strong>{{university_name}} Admissions Office</strong><br>
+                    Email: {{contact_email}}<br>
+                    Phone: {{contact_phone}}<br>
+                    Office Hours: Monday-Friday, 9:00 AM - 5:00 PM EST
+                </div>
+                
+                <div class="disclaimer">
+                    This email is part of a simulated college decision experience for entertainment purposes only. This is not an official communication from {{university_name}}. Any resemblance to actual university communications is coincidental.
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

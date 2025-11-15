@@ -2,6 +2,8 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from environs import Env
+from django.template.loader import render_to_string
+from .university_config import UNIVERSITY_CONFIG
 
 env = Env()
 env.read_env()
@@ -27,6 +29,18 @@ university_dictionary = {
         'Uchicago': 'college_decision/templates/decision_letters/Uchicago/uchicago_rejection.html',
         'Stanford': 'college_decision/templates/decision_letters/Stanford/stanford_rejection.html'
     }
+}
+
+# Portal templates for each university
+portal_templates = {
+    'Harvard': 'college_decision/templates/portal/harvard_portal.html',
+    'Yale': 'college_decision/templates/portal/yale_portal.html',
+    'Stanford': 'college_decision/templates/portal/stanford_portal.html',
+    'Dartmouth': 'college_decision/templates/portal/dartmouth_portal.html',
+    'Duke': 'college_decision/templates/portal/duke_portal.html',
+    'Princeton': 'college_decision/templates/portal/princeton_portal.html',
+    'Uchicago': 'college_decision/templates/portal/uchicago_portal.html',
+    'Nyuad': 'college_decision/templates/portal/nyuad_portal.html'
 }
 
 
@@ -72,6 +86,64 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
 
     except Exception as e:
         print("Error occurred:")
+        print(f"Type: {type(e)}")
+        print(f"Args: {e.args}")
+        print(f"Error: {str(e)}")
+        raise
+
+
+def send_notification_email(receiver_email, full_name, university, portal_url, application_id, decision_date):
+    """
+    Send a neutral notification email with a link to the portal
+    """
+    try:
+        # Get university configuration
+        uni_config = UNIVERSITY_CONFIG.get(university, {})
+        
+        # Render email template with dynamic content
+        html_body = render_to_string('emails/status_update_notification.html', {
+            'university_name': uni_config.get('full_name', university),
+            'university_logo_url': uni_config.get('logo_url', ''),
+            'university_color': uni_config.get('primary_color', '#333333'),
+            'full_name': full_name,
+            'portal_url': portal_url,
+            'application_id': application_id,
+            'decision_date': decision_date,
+            'contact_email': uni_config.get('contact_email', ''),
+            'contact_phone': uni_config.get('contact_phone', ''),
+        })
+        
+        # Create message
+        message = MIMEMultipart()
+        message["From"] = f"{uni_config.get('full_name', university)} Admissions <simulator@college-decision.com>"
+        message["To"] = receiver_email
+        message["Subject"] = f"Application Status Update - {uni_config.get('full_name', university)}"
+        message.attach(MIMEText(html_body, "html"))
+
+        # SMTP Configuration
+        smtp_username = env.str("SMTP_USERNAME")
+        smtp_password = env.str("SMTP_PASSWORD")
+        aws_region = env.str("AWS_REGION")
+        smtp_endpoint = f'email-smtp.{aws_region}.amazonaws.com'
+        
+        # Connect and send
+        print("Connecting to SMTP server...")
+        server = smtplib.SMTP(smtp_endpoint, 587)
+        server.starttls()
+        print("TLS started")
+        
+        print("Attempting login...")
+        server.login(smtp_username, smtp_password)
+        print("Login successful!")
+        
+        print("Sending notification email...")
+        server.sendmail("simulator@college-decision.com", receiver_email, message.as_string())
+        print("Notification email sent successfully!")
+        
+        server.quit()
+        
+    except Exception as e:
+        print("Error occurred while sending notification email:")
         print(f"Type: {type(e)}")
         print(f"Args: {e.args}")
         print(f"Error: {str(e)}")

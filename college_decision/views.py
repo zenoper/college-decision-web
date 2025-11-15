@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .send_email import send_email
+from .send_email import send_email, send_notification_email
 import re
 from django.http import HttpResponse
 
@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
-from .models import Payment, LetterGeneration, UniversityDecision
+from .models import Payment, LetterGeneration, UniversityDecision, DecisionToken
 
 from environs import Env
 env = Env()
@@ -84,27 +84,55 @@ def submitted_info(request):
         full_name = request.POST.get('full_name')
         university = request.POST.get('university')
         decision = request.POST.get('decision')
-        university_cap = university.capitalize() + ' ' + "Office of Undergraduate Admissions"
+        
+        # Generate unique token and application ID
+        import uuid
+        from datetime import datetime, timedelta
+        from django.utils import timezone
+        
+        token = uuid.uuid4().hex
+        application_id = f"APP-2025-{str(uuid.uuid4().int)[:6]}"
+        decision_date = datetime.now().strftime("%B %d, %Y")
+        
+        # Create portal URL
+        from .university_config import UNIVERSITY_CONFIG
+        uni_config = UNIVERSITY_CONFIG.get(university, {})
+        subdomain = uni_config.get('subdomain', university.lower())
+        portal_url = f"https://{subdomain}.college-decision.com/portal/{token}/"
+        
+        # Create DecisionToken record
+        expires_at = timezone.now() + timedelta(days=7)
+        DecisionToken.objects.create(
+            token=token,
+            full_name=full_name,
+            university=university,
+            decision=decision,
+            email=email_to,
+            application_id=application_id,
+            expires_at=expires_at
+        )
+        
+        # Send notification email instead of decision letter
+        send_notification_email(
+            receiver_email=email_to,
+            full_name=full_name,
+            university=university,
+            portal_url=portal_url,
+            application_id=application_id,
+            decision_date=decision_date
+        )
 
-        # First try to send the email
-        send_email(sender_name=university_cap, 
-                  receiver_email=email_to, 
-                  first_name=full_name, 
-                  decision=decision, 
-                  university=university)
-
-        # Since email was sent successfully, try to update stats but don't fail if it errors
+        # Update letter generation stats
         try:
-            # Update letter generation stats
             letter_stats, created = LetterGeneration.objects.get_or_create(
                 email=email_to,
                 defaults={
-                    'full_name': request.POST.get('full_name'),
+                    'full_name': full_name,
                 }
             )
             
             if not created:
-                letter_stats.full_name = request.POST.get('full_name')
+                letter_stats.full_name = full_name
                 letter_stats.letters_generated += 1
                 letter_stats.save()
 
@@ -250,4 +278,43 @@ def invalid_email(request):
 
 # def prices(request):
 #     return render(request, 'pricing.html')
+
+
+def portal_view(request, token):
+    """
+    View function for university decision portal
+    Validates token and displays the appropriate decision letter
+    """
+    try:
+        # Get decision token from database
+        decision_token = DecisionToken.objects.get(token=token)
+        
+        # Check if token has expired
+        if decision_token.is_expired():
+            return render(request, 'portal_expired.html')
+        
+        # Get university configuration
+        from .university_config import UNIVERSITY_CONFIG
+        uni_config = UNIVERSITY_CONFIG.get(decision_token.university, {})
+        
+        # Mark token as viewed
+        decision_token.mark_viewed()
+        
+        # Determine which template to use based on decision
+        template_name = f"portal/{decision_token.university.lower()}_portal.html"
+        
+        # Prepare context for template
+        context = {
+            'full_name': decision_token.full_name,
+            'university': decision_token.university,
+            'decision': decision_token.decision,
+            'application_id': decision_token.application_id,
+            'university_config': uni_config,
+        }
+        
+        # Render the portal page
+        return render(request, template_name, context)
+        
+    except DecisionToken.DoesNotExist:
+        return render(request, 'portal_invalid.html')
 

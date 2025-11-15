@@ -13,6 +13,7 @@ urlpatterns = [
     # path('stripe/webhook/', views.stripe_webhook, name='stripe-webhook'),
     # path('pay_bruh/', views.pay_bruh, name='pay_bruh'),
     # path('error_page/', views.error_page, name='error_page'),
-    # path('prices/', views.prices, name="prices")
+    # path('prices/', views.prices, name="prices"),
+    path('portal/<str:token>/', views.portal_view, name='portal_view'),
 ]
  

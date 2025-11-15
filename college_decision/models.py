@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 
 
 class Payment(models.Model):
@@ -46,4 +48,30 @@ class LetterGeneration(models.Model):
     def get_total_letters_generated(cls):
         """Returns the total number of letters generated across all users"""
         return cls.objects.aggregate(total=models.Sum('letters_generated'))['total'] or 0
+
+
+class DecisionToken(models.Model):
+    token = models.CharField(max_length=64, unique=True, db_index=True)
+    full_name = models.CharField(max_length=255)
+    university = models.CharField(max_length=100)
+    decision = models.CharField(max_length=20)  # Acceptance/Rejection
+    email = models.EmailField()
+    application_id = models.CharField(max_length=20)  # For realism
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    viewed = models.BooleanField(default=False)
+    viewed_at = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.email} - {self.university} ({self.decision})"
+
+    def is_expired(self):
+        """Check if the token has expired"""
+        return timezone.now() > self.expires_at
+
+    def mark_viewed(self):
+        """Mark the token as viewed"""
+        self.viewed = True
+        self.viewed_at = timezone.now()
+        self.save(update_fields=['viewed', 'viewed_at'])
 
