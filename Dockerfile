@@ -10,11 +10,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 # Install system dependencies
+# Note: psycopg2-binary doesn't require PostgreSQL dev packages
+# Only installing gcc for potential other package compilations
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc \
-        default-libmysqlclient-dev \
-        pkg-config \
+        curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtual environment
@@ -35,12 +36,13 @@ COPY . .
 RUN chown -R app:app /app
 USER app
 
-# Expose port
+# Expose port (Railway will set $PORT dynamically)
 EXPOSE 8000
 
-# Health check
+# Health check (using curl installed above)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
+    CMD curl -f http://localhost:${PORT:-8000}/ || exit 1
 
 # Run migrations and start application
-CMD ["sh", "-c", "python manage.py migrate --no-input --run-syncdb && python manage.py collectstatic --no-input && gunicorn collegedecisionweb.wsgi:application --bind 0.0.0.0:8000"]
+# Use $PORT environment variable (defaults to 8000 for local development)
+CMD sh -c "python manage.py migrate --no-input --run-syncdb && python manage.py collectstatic --no-input && gunicorn collegedecisionweb.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
