@@ -31,6 +31,7 @@ RUN useradd --create-home --shell /bin/bash app
 
 # Copy project code
 COPY . .
+RUN chmod +x entrypoint.sh
 
 # Change ownership of app directory
 RUN chown -R app:app /app
@@ -42,10 +43,6 @@ EXPOSE 8000
 # Health check (using curl installed above)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/ || exit 1
-
-# Copy entrypoint script
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
 
 # Run migrations and start application
 CMD ["./entrypoint.sh"]
