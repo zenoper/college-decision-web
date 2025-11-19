@@ -1,4 +1,5 @@
-import smtplib
+import boto3
+from botocore.exceptions import ClientError
 import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -50,13 +51,11 @@ portal_templates = {
 
 def send_email(sender_name, receiver_email, first_name, decision, university):
     try:
-        # SMTP Configuration - same as test.py
-        smtp_username = env.str("SMTP_USERNAME")
-        smtp_password = env.str("SMTP_PASSWORD")
+        # AWS Configuration
         aws_region = env.str("AWS_REGION")
-        smtp_endpoint = f'email-smtp.{aws_region}.amazonaws.com'
-        # print(f"username: {type(smtp_username)}, password: {type(smtp_password)}, aws-region: {type(aws_region)}, endpoint: {type(smtp_endpoint)}")
-        # print(f"username: {smtp_username}, password: {smtp_password}, aws-region: {aws_region}, endpoint: {smtp_endpoint}")
+        
+        # Create SES client
+        client = boto3.client('ses', region_name=aws_region)
 
         # Get HTML content
         with open(university_dictionary[decision][university], 'r') as f:
@@ -72,22 +71,19 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
         message["Subject"] = "View Update to your Application!"
         message.attach(MIMEText(html_body, "html"))
 
-        # Connect and send - same as test.py
-        # Connect and send - same as test.py
-        logger.info(f"Connecting to SMTP server at {smtp_endpoint} (SSL)...")
-        server = smtplib.SMTP_SSL(smtp_endpoint, 465, timeout=10)
-        logger.info("SSL connection established")
-        
-        logger.info("Attempting login...")
-        server.login(smtp_username, smtp_password)
-        logger.info("Login successful!")
-        
-        logger.info("Sending email...")
-        server.sendmail("simulator@college-decision.com", receiver_email, message.as_string())
-        logger.info("Email sent successfully!")
-        
-        server.quit()
+        logger.info("Sending email via SES API...")
+        response = client.send_raw_email(
+            Source=message["From"],
+            Destinations=[receiver_email],
+            RawMessage={
+                'Data': message.as_string(),
+            }
+        )
+        logger.info(f"Email sent successfully! MessageId: {response['MessageId']}")
 
+    except ClientError as e:
+        logger.error(f"AWS SES ClientError: {e.response['Error']['Message']}")
+        raise
     except Exception as e:
         logger.error("Error occurred:")
         logger.error(f"Type: {type(e)}")
@@ -124,28 +120,25 @@ def send_notification_email(receiver_email, full_name, university, portal_url, a
         message["Subject"] = f"Application Status Update - {uni_config.get('full_name', university)}"
         message.attach(MIMEText(html_body, "html"))
 
-        # SMTP Configuration
-        smtp_username = env.str("SMTP_USERNAME")
-        smtp_password = env.str("SMTP_PASSWORD")
+        # AWS Configuration
         aws_region = env.str("AWS_REGION")
-        smtp_endpoint = f'email-smtp.{aws_region}.amazonaws.com'
         
-        # Connect and send
-        # Connect and send
-        logger.info(f"Connecting to SMTP server at {smtp_endpoint} (SSL)...")
-        server = smtplib.SMTP_SSL(smtp_endpoint, 465, timeout=10)
-        logger.info("SSL connection established")
+        # Create SES client
+        client = boto3.client('ses', region_name=aws_region)
         
-        logger.info("Attempting login...")
-        server.login(smtp_username, smtp_password)
-        logger.info("Login successful!")
+        logger.info("Sending notification email via SES API...")
+        response = client.send_raw_email(
+            Source=message["From"],
+            Destinations=[receiver_email],
+            RawMessage={
+                'Data': message.as_string(),
+            }
+        )
+        logger.info(f"Notification email sent successfully! MessageId: {response['MessageId']}")
         
-        logger.info("Sending notification email...")
-        server.sendmail("simulator@college-decision.com", receiver_email, message.as_string())
-        logger.info("Notification email sent successfully!")
-        
-        server.quit()
-        
+    except ClientError as e:
+        logger.error(f"AWS SES ClientError: {e.response['Error']['Message']}")
+        raise
     except Exception as e:
         logger.error("Error occurred while sending notification email:")
         logger.error(f"Type: {type(e)}")
