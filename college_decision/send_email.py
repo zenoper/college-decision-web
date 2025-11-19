@@ -73,8 +73,9 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
         message.attach(MIMEText(html_body, "html"))
 
         # Connect and send - same as test.py
-        logger.info("Connecting to SMTP server...")
-        server = smtplib.SMTP(smtp_endpoint, 587)
+        # Connect and send - same as test.py
+        logger.info(f"Connecting to SMTP server at {smtp_endpoint}...")
+        server = smtplib.SMTP(smtp_endpoint, 587, timeout=10)
         server.starttls()
         logger.info("TLS started")
         
@@ -131,8 +132,9 @@ def send_notification_email(receiver_email, full_name, university, portal_url, a
         smtp_endpoint = f'email-smtp.{aws_region}.amazonaws.com'
         
         # Connect and send
-        logger.info("Connecting to SMTP server...")
-        server = smtplib.SMTP(smtp_endpoint, 587)
+        # Connect and send
+        logger.info(f"Connecting to SMTP server at {smtp_endpoint}...")
+        server = smtplib.SMTP(smtp_endpoint, 587, timeout=10)
         server.starttls()
         logger.info("TLS started")
         
