@@ -117,14 +117,20 @@ def submitted_info(request):
         )
         
         # Send notification email instead of decision letter
-        send_notification_email(
-            receiver_email=email_to,
-            full_name=full_name,
-            university=university,
-            portal_url=portal_url,
-            application_id=application_id,
-            decision_date=decision_date
+        # Send notification email in background thread to avoid blocking
+        import threading
+        email_thread = threading.Thread(
+            target=send_notification_email,
+            kwargs={
+                'receiver_email': email_to,
+                'full_name': full_name,
+                'university': university,
+                'portal_url': portal_url,
+                'application_id': application_id,
+                'decision_date': decision_date
+            }
         )
+        email_thread.start()
 
         # Update letter generation stats
         try:
