@@ -43,10 +43,9 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:${PORT:-8000}/ || exit 1
 
+# Copy entrypoint script
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
 # Run migrations and start application
-# Use $PORT environment variable (defaults to 8000 for local development)
-CMD sh -c "python manage.py migrate --no-input --run-syncdb && \
-           echo 'Running collectstatic...' && \
-           python manage.py collectstatic --no-input --verbosity 2 2>&1 && \
-           echo 'Starting gunicorn on port ${PORT:-8000}...' && \
-           gunicorn collegedecisionweb.wsgi:application --bind 0.0.0.0:${PORT:-8000} --log-level info --access-logfile - --error-logfile -"
+CMD ["./entrypoint.sh"]
