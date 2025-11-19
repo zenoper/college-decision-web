@@ -74,10 +74,9 @@ def send_email(sender_name, receiver_email, first_name, decision, university):
 
         # Connect and send - same as test.py
         # Connect and send - same as test.py
-        logger.info(f"Connecting to SMTP server at {smtp_endpoint}...")
-        server = smtplib.SMTP(smtp_endpoint, 587, timeout=10)
-        server.starttls()
-        logger.info("TLS started")
+        logger.info(f"Connecting to SMTP server at {smtp_endpoint} (SSL)...")
+        server = smtplib.SMTP_SSL(smtp_endpoint, 465, timeout=10)
+        logger.info("SSL connection established")
         
         logger.info("Attempting login...")
         server.login(smtp_username, smtp_password)
@@ -133,10 +132,9 @@ def send_notification_email(receiver_email, full_name, university, portal_url, a
         
         # Connect and send
         # Connect and send
-        logger.info(f"Connecting to SMTP server at {smtp_endpoint}...")
-        server = smtplib.SMTP(smtp_endpoint, 587, timeout=10)
-        server.starttls()
-        logger.info("TLS started")
+        logger.info(f"Connecting to SMTP server at {smtp_endpoint} (SSL)...")
+        server = smtplib.SMTP_SSL(smtp_endpoint, 465, timeout=10)
+        logger.info("SSL connection established")
         
         logger.info("Attempting login...")
         server.login(smtp_username, smtp_password)
